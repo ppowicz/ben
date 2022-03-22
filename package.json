@@ -1,0 +1,27 @@
+{
+  "name": "ben",
+  "version": "1.0.0",
+  "description": "ben",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ppowicz/ben.git"
+  },
+  "keywords": [
+    "ben"
+  ],
+  "author": "ppowicz",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ppowicz/ben/issues"
+  },
+  "homepage": "https://github.com/ppowicz/ben#readme",
+  "dependencies": {
+    "axios": "^0.26.1",
+    "discord.js": "^13.6.0",
+    "dotenv": "^16.0.0"
+  }
+}
