@@ -1,7 +1,8 @@
 require("dotenv").config()
 const Discord = require("discord.js")
+const { joinVoiceChannel, createAudioPlayer, createAudioResource } = require("@discordjs/voice")
 
-const client = new Discord.Client({ intents: ["GUILDS", "GUILD_MESSAGES"] })
+const client = new Discord.Client({ intents: ["GUILDS", "GUILD_MESSAGES", Discord.Intents.FLAGS.GUILD_VOICE_STATES] })
 
 client.on("ready", () => {
   console.log(`Logged in as ${client.user.tag}!`)
@@ -11,6 +12,14 @@ client.on("ready", () => {
 client.on("messageCreate", msg => {
   let msgArgs = msg.content.toLowerCase().split(" ")
   if (msgArgs.includes("ben") || msgArgs.includes("ben?")) {
+    if (msgArgs.includes("join")) {
+      voiceJoin(msg)
+      return
+    } else if (msgArgs.includes("leave")) {
+      voiceLeave(msg)
+      return
+    }
+
     ben(msg)
   } else if (msgArgs.includes("doxx")) {
     doxx(msg)
@@ -55,6 +64,32 @@ function doxx(msg) {
   msg.channel.send(ip)
 }
 
+var connection
+const player = createAudioPlayer()
+
+function voiceJoin(msg) {
+  var voiceChannel = msg.member.voice.channel
+  if (voiceChannel.members.has(client.user.id)) {
+    msg.channel.send("im already talking there")
+    return
+  }
+  connection = joinVoiceChannel({
+    channelId: voiceChannel.id,
+    guildId: msg.guild.id,
+    adapterCreator: msg.guild.voiceAdapterCreator,
+    selfDeaf: false
+  })
+  player.play(createAudioResource("./sounds/ben.mp3"))
+  connection.subscribe(player)
+}
+
+function voiceLeave(msg) {
+  try {
+    connection.destroy()
+  } catch {
+    msg.channel.send("im not even talking")
+  }
+}
 
 function setPresence() {
   client.user.setActivity(
