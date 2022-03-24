@@ -8,20 +8,12 @@ client.on("ready", () => {
   setPresence()
 })
 
-client.on("message", msg => {
-  let msgArgs = msg.content.split(" ")
-  if (msgArgs.includes("ben")) {
+client.on("messageCreate", msg => {
+  let msgArgs = msg.content.toLowerCase().split(" ")
+  if (msgArgs.includes("ben") || msgArgs.includes("ben?")) {
     ben(msg)
   } else if (msgArgs.includes("doxx")) {
-    if (Array.from(msg.mentions.users).length != 0) {
-      if (msg.content.includes("<@!955597739104825455>")) {
-        msg.channel.send("what")
-        return
-      }
-      ip(msg)
-    } else {
-      msg.channel.send("who")
-    }
+    doxx(msg)
   }
 })
 
@@ -32,9 +24,37 @@ function ben(msg) {
   msg.channel.send(responses[Math.floor(Math.random() * responses.length)])
 }
 
-function ip(msg) {
-  msg.channel.send(Math.floor(Math.random() * 254 + 1) + "." + Math.floor(Math.random() * 254 + 1) + "." + Math.floor(Math.random() * 254 + 1) + "." + Math.floor(Math.random() * 254 + 1))
+var doxxed = {}
+
+function random255() {
+  return Math.floor(Math.random() * 254 + 1)
 }
+
+function doxx(msg) {
+  let mentions = Array.from(msg.mentions.users)
+
+  if (mentions.length != 1) {
+    msg.channel.send("who")
+    return
+  }
+
+  let targetId = mentions[0][0]
+
+  if (msg.content.includes(client.user.id)) {
+    msg.channel.send("what")
+    return
+  }
+
+  if (doxxed[targetId]) {
+    msg.channel.send(doxxed[targetId])
+    return
+  }
+
+  let ip = [random255(), random255(), random255(), random255()].join(".")
+  doxxed[targetId] = ip
+  msg.channel.send(ip)
+}
+
 
 function setPresence() {
   client.user.setActivity(
